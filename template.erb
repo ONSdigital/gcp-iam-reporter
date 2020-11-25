@@ -52,6 +52,7 @@
   </head>
   <body>
     <h1><%= title %></h1>
+  <% unless gcs_table_rows.length.zero? %> 
     <table>
       <thead>
         <tr>
@@ -67,6 +68,8 @@
       <% end %>
       </tbody>
     </table>
+  <% end %>
+  <% unless pubsub_table_rows.length.zero? %>  
     <table>
       <thead>
         <tr>
@@ -82,5 +85,6 @@
       <% end %>
       </tbody>
     </table>
+  <% end %>
   </body>
 </html>
