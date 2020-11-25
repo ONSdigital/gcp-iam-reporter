@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><%= title %></title>
+    <style type="text/css">
+      body {
+        background-color: #fff;
+        color: #000;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin: 1em;
+      }
+      h1 {
+        font-size: 200%;
+        text-transform: uppercase;
+      }
+      table {
+        background-color: #000;
+        border: 2px solid #000;
+        border-collapse: separate; /* Needed to get the rounded corners to appear. */
+        border-spacing: 1px;
+        border-radius: 6px;
+        font-size: 85%;
+        margin-bottom: 40px;
+      }
+      thead {
+        color: #fff;
+      }
+      tbody th {
+        color: #000;
+      }
+      th {
+        font-weight: bold;
+        text-align: left;
+      }
+      th, td {
+        padding: 5px;
+        vertical-align: top;
+      }
+      td {
+        background-color: #fff;
+      }
+      .bucket, .topic {
+        font-size: 120%;
+      }
+      .role {
+        border-bottom: 2px solid #ccc;
+        font-weight: bold;
+        padding-bottom: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <table>
+      <thead>
+        <tr>
+          <th>GCS Bucket</th>
+          <th>IAM Permissions</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% gcs_table_rows.each do |row| %>
+        <tr>
+          <%= row %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <table>
+      <thead>
+        <tr>
+          <th>Pub/Sub Topic</th>
+          <th>IAM Permissions</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% pubsub_table_rows.each do |row| %>
+        <tr>
+          <%= row %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </body>
+</html>
