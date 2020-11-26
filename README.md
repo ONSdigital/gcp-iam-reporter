@@ -5,7 +5,7 @@ A Ruby script that produces an HTML report for the currently active [GCP](https:
 * A list of [Cloud Pub/Sub](https://cloud.google.com/pubsub) topics and associated IAM roles/members
 
 ## Installation
-* Ensure that [Ruby](https://www.ruby-lang.org/en/downloads/) is installed.
+* Ensure that [Ruby](https://www.ruby-lang.org/en/downloads/) is installed. [rbenv](https://github.com/rbenv/rbenv) is a convenient way to manage Ruby installations.
 
 ## Running
 Run `./gcp-iam-reporter.sh` to generate an HTML report named **<project>-iam-report.html**, where _<project>_ is the name of the current GCP project.
