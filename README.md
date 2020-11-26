@@ -8,7 +8,7 @@ A Ruby script that produces an HTML report for the currently active [GCP](https:
 * Ensure that [Ruby](https://www.ruby-lang.org/en/downloads/) is installed. [rbenv](https://github.com/rbenv/rbenv) is a convenient way to manage Ruby installations.
 
 ## Running
-Run `./gcp-iam-reporter.sh` to generate an HTML report named **<project>-iam-report.html**, where _<project>_ is the name of the current GCP project.
+Run `./gcp-iam-reporter.sh` to generate an HTML report named **&lt;project&gt;-iam-report.html**, where *<project>* is the name of the current GCP project.
 
 ## Copyright
 Copyright (C) 2020 Crown Copyright (Office for National Statistics)
