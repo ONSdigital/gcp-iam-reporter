@@ -23,7 +23,8 @@ class IAMReporter
       permissions_json = JSON.parse(`gsutil iam get #{bucket}`)
       permissions_html = generate_permissions_html(permissions_json)
       bucket_name = bucket.gsub('gs://', '').delete_suffix('/')
-      table_row_html = "<td class=\"bucket\">#{bucket_name}</td><td class=\"permissions\">#{permissions_html}</td>"
+      gcp_internal = %w(_cloudbuild appspot.com eu.artifacts gcf-sources).any? { |s| bucket_name.include?(s) } ? 'Yes' : 'No'
+      table_row_html = "<td class=\"bucket\">#{bucket_name}</td><td class=\"permissions\">#{permissions_html}</td><td>#{gcp_internal}</td>"
       gcs_table_rows_html << table_row_html
     end
     gcs_table_rows_html
