@@ -33,7 +33,7 @@ class IAMReporter
   def generate_pubsub_table_rows_html
     puts 'Getting Pub/Sub IAM permissions...'
     pubsub_table_rows_html = []
-    topics = `gcloud pubsub topics list`
+    topics = `gcloud pubsub topics list | sort`
     topics.split("\n").each do |topic|
       next if topic.start_with?('---')
 
