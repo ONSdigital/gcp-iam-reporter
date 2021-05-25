@@ -48,7 +48,7 @@
       td {
         background-color: #fff;
       }
-      .bucket, .function, .topic {
+      .bucket, .function, .service, .topic {
         font-size: 120%;
       }
       .no-permissions {
@@ -89,7 +89,7 @@
   </head>
   <body>
     <h1 id="top"><%= title %></h1>
-    <p><a href="gcs">GCS</a> &bull; <a href="#pubsub">PubSub</a> &bull; <a href="#cloudfunctions">Cloud Functions</a></p>
+    <p><a href="gcs">GCS</a> &bull; <a href="#pubsub">PubSub</a> &bull; <a href="#cloudfunctions">Cloud Functions</a> &bull; <a href="#cloudrun">Cloud Run</a></p>
   <% unless gcs_table_rows.length.zero? %>
     <table id="gcs">
       <thead>
@@ -145,5 +145,23 @@
     </table>
     <p><a href="#top">Top</a></p>
   <% end %>
+  <% unless cloud_run_table_rows.length.zero? %>
+    <table id="cloudrun">
+      <thead>
+        <tr>
+          <th>Cloud Run Service</th>
+          <th>IAM Permissions</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% cloud_run_table_rows.each do |row| %>
+        <tr>
+          <%= row %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <p><a href="#top">Top</a></p>
+  <% end %>  
   </body>
 </html>

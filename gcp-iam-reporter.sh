@@ -14,7 +14,8 @@ class IAMReporter
     write_report(filename,
                  generate_gcs_table_rows_html,
                  generate_pubsub_table_rows_html,
-                 generate_cloud_functions_table_rows_html)
+                 generate_cloud_functions_table_rows_html,
+                 generate_cloud_run_table_rows_html)
   end
 
   private
@@ -30,6 +31,19 @@ class IAMReporter
       cloud_functions_table_rows_html << table_row_html
     end
     cloud_functions_table_rows_html
+  end
+
+  def generate_cloud_run_table_rows_html
+    puts 'Getting Cloud Run IAM permissions...'
+    cloud_run_table_rows_html = []
+    cloud_run_services = `gcloud run services list --platform managed --format 'value(name)'`
+    cloud_run_services.split("\n").each do |service|
+      permissions_json = JSON.parse(`gcloud run services get-iam-policy #{service} --platform managed --region #{LONDON_REGION} --format json`)
+      permissions_html = generate_permissions_html(permissions_json)
+      table_row_html = "<td class=\"service\">#{service}</td><td class=\"permissions\">#{permissions_html}</td>"
+      cloud_run_table_rows_html << table_row_html
+    end
+    cloud_run_table_rows_html
   end
 
   def generate_gcs_table_rows_html
@@ -76,12 +90,13 @@ class IAMReporter
     permissions_html
   end
 
-  def write_report(filename, gcs_table_rows_html, pubsub_table_rows_html, cloud_functions_table_rows_html)
+  def write_report(filename, gcs_table_rows_html, pubsub_table_rows_html, cloud_functions_table_rows_html, cloud_run_table_rows_html)
     html = {}
     html['title'] = "IAM Report for #{@gcp_project} (generated #{Time.now.strftime(DATE_TIME_FORMAT)})"
     html['gcs_table_rows']             = gcs_table_rows_html
     html['pubsub_table_rows']          = pubsub_table_rows_html
     html['cloud_functions_table_rows'] = cloud_functions_table_rows_html
+    html['cloud_run_table_rows']       = cloud_run_table_rows_html
     template = './template.erb'
     content = ERB.new(File.read(template)).result(OpenStruct.new(html).instance_eval { binding })
     File.open(filename, 'w') { |f| f.write(content) }
