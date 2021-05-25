@@ -6,14 +6,15 @@ require 'json'
 # Class that generates an HTML report showing the IAM permissions for various GCP services.
 class IAMReporter
   DATE_TIME_FORMAT = '%d %b %Y %H:%M'.freeze
-  LONDON_REGION    = 'europe-west2'
+  LONDON_REGION    = 'europe-west2'.freeze
 
   def initialize
     @gcp_project = `gcloud config list --format 'value(core.project)'`
     filename = "#{@gcp_project.rstrip}-iam-report.html"
-    write_report(filename, generate_gcs_table_rows_html,
-                           generate_pubsub_table_rows_html,
-                           generate_cloud_functions_table_rows_html)
+    write_report(filename,
+                 generate_gcs_table_rows_html,
+                 generate_pubsub_table_rows_html,
+                 generate_cloud_functions_table_rows_html)
   end
 
   private
@@ -39,7 +40,7 @@ class IAMReporter
       permissions_json = JSON.parse(`gsutil iam get #{bucket}`)
       permissions_html = generate_permissions_html(permissions_json)
       bucket_name = bucket.gsub('gs://', '').delete_suffix('/')
-      gcp_internal = %w(_cloudbuild appspot.com eu.artifacts gcf-sources).any? { |s| bucket_name.include?(s) } ? 'Yes' : 'No'
+      gcp_internal = %w[_cloudbuild appspot.com eu.artifacts gcf-sources].any? { |s| bucket_name.include?(s) } ? 'Yes' : 'No'
       table_row_html = "<td class=\"bucket\">#{bucket_name}</td><td class=\"permissions\">#{permissions_html}</td><td>#{gcp_internal}</td>"
       gcs_table_rows_html << table_row_html
     end
