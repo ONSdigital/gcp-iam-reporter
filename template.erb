@@ -40,8 +40,12 @@
       td {
         background-color: #fff;
       }
-      .bucket, .topic {
+      .bucket, .function, .topic {
         font-size: 120%;
+      }
+      .no-permissions {
+        color: #999;
+        font-style: italic;
       }
       .role {
         border-bottom: 2px solid #ccc;
@@ -52,7 +56,7 @@
   </head>
   <body>
     <h1><%= title %></h1>
-  <% unless gcs_table_rows.length.zero? %> 
+  <% unless gcs_table_rows.length.zero? %>
     <table>
       <thead>
         <tr>
@@ -70,7 +74,7 @@
       </tbody>
     </table>
   <% end %>
-  <% unless pubsub_table_rows.length.zero? %>  
+  <% unless pubsub_table_rows.length.zero? %>
     <table>
       <thead>
         <tr>
@@ -80,6 +84,23 @@
       </thead>
       <tbody>
       <% pubsub_table_rows.each do |row| %>
+        <tr>
+          <%= row %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  <% unless cloud_functions_table_rows.length.zero? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Cloud Function</th>
+          <th>IAM Permissions</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% cloud_functions_table_rows.each do |row| %>
         <tr>
           <%= row %>
         </tr>

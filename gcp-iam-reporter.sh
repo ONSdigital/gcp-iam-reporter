@@ -3,17 +3,33 @@
 require 'erb'
 require 'json'
 
-# Class that generates an HTML report showing GCS and Pub/Sub IAM permissions.
+# Class that generates an HTML report showing the IAM permissions for various GCP services.
 class IAMReporter
   DATE_TIME_FORMAT = '%d %b %Y %H:%M'.freeze
+  LONDON_REGION    = 'europe-west2'
 
   def initialize
     @gcp_project = `gcloud config list --format 'value(core.project)'`
     filename = "#{@gcp_project.rstrip}-iam-report.html"
-    write_report(filename, generate_gcs_table_rows_html, generate_pubsub_table_rows_html)
+    write_report(filename, generate_gcs_table_rows_html,
+                           generate_pubsub_table_rows_html,
+                           generate_cloud_functions_table_rows_html)
   end
 
   private
+
+  def generate_cloud_functions_table_rows_html
+    puts 'Getting Cloud Functions IAM permissions...'
+    cloud_functions_table_rows_html = []
+    cloud_functions = `gcloud functions list --format 'value(name)'`
+    cloud_functions.split("\n").each do |cloud_function|
+      permissions_json = JSON.parse(`gcloud functions get-iam-policy #{cloud_function} --region #{LONDON_REGION} --format json`)
+      permissions_html = generate_permissions_html(permissions_json)
+      table_row_html = "<td class=\"function\">#{cloud_function}</td><td class=\"permissions\">#{permissions_html}</td>"
+      cloud_functions_table_rows_html << table_row_html
+    end
+    cloud_functions_table_rows_html
+  end
 
   def generate_gcs_table_rows_html
     puts 'Getting GCS IAM permissions...'
@@ -54,16 +70,17 @@ class IAMReporter
         binding['members'].each { |member| permissions_html << "<div class=\"member\">Member: #{member}</div><br>" }
       end
     else
-      permissions_html << '<div>No permissions assigned</div>'
+      permissions_html << '<div class="no-permissions">No explicit permissions assigned (project-level permissions may be being inherited)</div>'
     end
     permissions_html
   end
 
-  def write_report(filename, gcs_table_rows_html, pubsub_table_rows_html)
+  def write_report(filename, gcs_table_rows_html, pubsub_table_rows_html, cloud_functions_table_rows_html)
     html = {}
     html['title'] = "IAM Report for #{@gcp_project} (generated #{Time.now.strftime(DATE_TIME_FORMAT)})"
-    html['gcs_table_rows']    = gcs_table_rows_html
-    html['pubsub_table_rows'] = pubsub_table_rows_html
+    html['gcs_table_rows']             = gcs_table_rows_html
+    html['pubsub_table_rows']          = pubsub_table_rows_html
+    html['cloud_functions_table_rows'] = cloud_functions_table_rows_html
     template = './template.erb'
     content = ERB.new(File.read(template)).result(OpenStruct.new(html).instance_eval { binding })
     File.open(filename, 'w') { |f| f.write(content) }
