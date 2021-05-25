@@ -10,9 +10,18 @@
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         margin: 1em;
       }
+      a:link, a:visited, a:active {
+        color: blue;
+      }
+      a:hover {
+        color: red;
+      }
       h1 {
         font-size: 200%;
         text-transform: uppercase;
+      }
+      p {
+        margin-left: 10px;
       }
       table {
         background-color: #000;
@@ -21,7 +30,6 @@
         border-spacing: 1px;
         border-radius: 6px;
         font-size: 85%;
-        margin-bottom: 40px;
       }
       thead {
         color: #fff;
@@ -53,11 +61,37 @@
         padding-bottom: 6px;
       }
     </style>
+    <style type="text/css" media="print">
+      h1 {
+        font-size: 100%;
+      }
+      p {
+        display: none;
+      }
+      table {
+        border: 1px solid #000;
+        border-collapse: collapse;
+      }
+      thead {
+        color: #000;
+      }
+      th, td {
+        border: 1px solid #000;
+      }
+      .no-permissions {
+        color: #000;
+        font-style: italic;
+      }
+      .role {
+        border-bottom: 1px solid #ccc;
+      }
+    </style>
   </head>
   <body>
-    <h1><%= title %></h1>
+    <h1 id="top"><%= title %></h1>
+    <p><a href="gcs">GCS</a> &bull; <a href="#pubsub">PubSub</a> &bull; <a href="#cloudfunctions">Cloud Functions</a></p>
   <% unless gcs_table_rows.length.zero? %>
-    <table>
+    <table id="gcs">
       <thead>
         <tr>
           <th>GCS Bucket</th>
@@ -73,9 +107,10 @@
       <% end %>
       </tbody>
     </table>
+    <p><a href="#top">Top</a></p>
   <% end %>
   <% unless pubsub_table_rows.length.zero? %>
-    <table>
+    <table id="pubsub">
       <thead>
         <tr>
           <th>Pub/Sub Topic</th>
@@ -90,9 +125,10 @@
       <% end %>
       </tbody>
     </table>
+    <p><a href="#top">Top</a></p>
   <% end %>
   <% unless cloud_functions_table_rows.length.zero? %>
-    <table>
+    <table id="cloudfunctions">
       <thead>
         <tr>
           <th>Cloud Function</th>
@@ -107,6 +143,7 @@
       <% end %>
       </tbody>
     </table>
+    <p><a href="#top">Top</a></p>
   <% end %>
   </body>
 </html>
