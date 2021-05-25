@@ -7,12 +7,14 @@ A Ruby script that produces an HTML report for the currently active [GCP](https:
 ## Installation
 * Ensure that [Ruby](https://www.ruby-lang.org/en/downloads/) is installed. [rbenv](https://github.com/rbenv/rbenv) is a convenient way to manage Ruby installations.  
 - On Mac  
-    ```brew install ruby```  
-    ```brew install rbenv```  
-  
-## Set GCP Project  
 
-* Run ```gc config set project <project name to report against>```
+    ```bash
+    brew install ruby
+    brew install rbenv
+    ```
+
+## Set GCP Project
+* Run `gcloud config set project <project name to report against>`
 
 ## Running
 * Run `./gcp-iam-reporter.sh` to generate an HTML report named **&lt;project&gt;-iam-report.html**, where **&lt;project&gt;** is the name of the current GCP project.
