@@ -48,7 +48,7 @@
       td {
         background-color: #fff;
       }
-      .bucket, .function, .service, .topic {
+      .bucket, .dataset, .function, .service, .topic {
         font-size: 120%;
       }
       .no-permissions {
@@ -89,7 +89,7 @@
   </head>
   <body>
     <h1 id="top"><%= title %></h1>
-    <p><a href="gcs">GCS</a> &bull; <a href="#pubsub">PubSub</a> &bull; <a href="#cloudfunctions">Cloud Functions</a> &bull; <a href="#cloudrun">Cloud Run</a></p>
+    <p><a href="gcs">GCS</a> &bull; <a href="#pubsub">PubSub</a> &bull; <a href="#cloudfunctions">Cloud Functions</a> &bull; <a href="#cloudrun">Cloud Run</a> &bull; <a href="#datasets">BigQuery Datasets</a></p>
   <% unless gcs_table_rows.length.zero? %>
     <table id="gcs">
       <thead>
@@ -162,6 +162,24 @@
       </tbody>
     </table>
     <p><a href="#top">Top</a></p>
-  <% end %>  
+  <% end %>
+  <% unless dataset_table_rows.length.zero? %>
+    <table id="datasets">
+      <thead>
+        <tr>
+          <th>BigQuery Dataset</th>
+          <th>IAM Permissions</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% dataset_table_rows.each do |row| %>
+        <tr>
+          <%= row %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <p><a href="#top">Top</a></p>
+  <% end %>
   </body>
 </html>

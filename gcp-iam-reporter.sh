@@ -15,7 +15,8 @@ class IAMReporter
                  generate_gcs_table_rows_html,
                  generate_pubsub_table_rows_html,
                  generate_cloud_functions_table_rows_html,
-                 generate_cloud_run_table_rows_html)
+                 generate_cloud_run_table_rows_html,
+                 generate_dataset_table_rows_html)
   end
 
   private
@@ -44,6 +45,19 @@ class IAMReporter
       cloud_run_table_rows_html << table_row_html
     end
     cloud_run_table_rows_html
+  end
+
+  def generate_dataset_table_rows_html
+    puts 'Getting BigQuery Dataset IAM permissions...'
+    dataset_rows_html = []
+    datasets = `gcloud alpha bq datasets list --format 'value(datasetReference.datasetId)'`
+    datasets.split("\n").each do |dataset|
+      permissions_json = JSON.parse(`gcloud alpha bq datasets describe #{dataset} --format json`)
+      permissions_html = generate_dataset_permissions_html(permissions_json)
+      table_row_html = "<td class=\"dataset\">#{dataset}</td><td class=\"permissions\">#{permissions_html}</td>"
+      dataset_rows_html << table_row_html
+    end
+    dataset_rows_html
   end
 
   def generate_gcs_table_rows_html
@@ -77,6 +91,23 @@ class IAMReporter
     pubsub_table_rows_html
   end
 
+  def generate_dataset_permissions_html(permissions_json)
+    permissions_html = ''
+    if permissions_json.key?('access')
+      permissions_json['access'].each do |access|
+        permissions_html << "<div class=\"role\">Role: #{access['role'].capitalize}</div><br>"
+        if access.key?('specialGroup')
+          permissions_html << "<div class=\"member\">Group: #{access['specialGroup']}</div><br>"
+        elsif access.key?('userByEmail')
+          permissions_html << "<div class=\"member\">User: #{access['userByEmail']}</div><br>"
+        end
+      end
+    else
+      permissions_html << '<div class="no-permissions">No explicit permissions assigned (project-level permissions may be being inherited)</div>'
+    end
+    permissions_html
+  end
+
   def generate_permissions_html(permissions_json)
     permissions_html = ''
     if permissions_json.key?('bindings')
@@ -90,13 +121,19 @@ class IAMReporter
     permissions_html
   end
 
-  def write_report(filename, gcs_table_rows_html, pubsub_table_rows_html, cloud_functions_table_rows_html, cloud_run_table_rows_html)
+  def write_report(filename,
+                   gcs_table_rows_html,
+                   pubsub_table_rows_html,
+                   cloud_functions_table_rows_html,
+                   cloud_run_table_rows_html,
+                   dataset_table_rows_html)
     html = {}
     html['title'] = "IAM Report for #{@gcp_project} (generated #{Time.now.strftime(DATE_TIME_FORMAT)})"
     html['gcs_table_rows']             = gcs_table_rows_html
     html['pubsub_table_rows']          = pubsub_table_rows_html
     html['cloud_functions_table_rows'] = cloud_functions_table_rows_html
     html['cloud_run_table_rows']       = cloud_run_table_rows_html
+    html['dataset_table_rows']         = dataset_table_rows_html
     template = './template.erb'
     content = ERB.new(File.read(template)).result(OpenStruct.new(html).instance_eval { binding })
     File.open(filename, 'w') { |f| f.write(content) }
